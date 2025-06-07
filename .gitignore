@@ -1,0 +1,24 @@
+# junk directories
+.vs
+.idea
+.gradle
+.import
+bin
+obj
+debug
+target
+build
+node_modules
+log
+logs
+
+# secrets
+.env
+
+# binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
