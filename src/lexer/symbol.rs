@@ -1,7 +1,7 @@
 use std::iter::Peekable;
 use std::str::CharIndices;
 
-pub fn parse_symbol(
+pub fn lex_symbol(
     chars: &mut Peekable<CharIndices<'_>>,
     _line: usize,
     column: usize,

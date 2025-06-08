@@ -1,9 +1,9 @@
+use crate::lexer::{lex_peekable, LexError, Token};
 use crate::Spanned;
-use crate::lexer::{LexError, Token, lex_peekable};
 use std::iter::Peekable;
 use std::str::CharIndices;
 
-pub fn parse_group(
+pub fn lex_group(
     chars: &mut Peekable<CharIndices<'_>>,
     start_delim: char,
     end_delim: char,
@@ -50,5 +50,8 @@ pub fn parse_group(
         });
     }
 
-    Ok((end, lex_peekable(group_content.char_indices().peekable(), line)?))
+    Ok((
+        end,
+        lex_peekable(group_content.char_indices().peekable(), line)?,
+    ))
 }

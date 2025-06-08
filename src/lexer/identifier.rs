@@ -1,7 +1,7 @@
 use std::iter::Peekable;
 use std::str::CharIndices;
 
-pub fn parse_identifier(
+pub fn lex_identifier(
     chars: &mut Peekable<CharIndices<'_>>,
     _line: usize,
     column: usize,

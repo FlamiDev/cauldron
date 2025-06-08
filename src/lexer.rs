@@ -5,12 +5,12 @@ mod number;
 mod string;
 mod symbol;
 
-use crate::lexer::group::parse_group;
-use crate::lexer::identifier::{is_ident_start, parse_identifier};
+use crate::lexer::group::lex_group;
+use crate::lexer::identifier::{is_ident_start, lex_identifier};
 use crate::lexer::lex_error::LexError;
-use crate::lexer::number::parse_number;
-use crate::lexer::string::parse_string;
-use crate::lexer::symbol::parse_symbol;
+use crate::lexer::number::lex_number;
+use crate::lexer::string::lex_string;
+use crate::lexer::symbol::lex_symbol;
 pub(crate) use crate::Spanned;
 use std::iter::Peekable;
 use std::str::CharIndices;
@@ -33,7 +33,10 @@ pub fn lex(source: &str) -> Result<Vec<Spanned<Token>>, LexError> {
     lex_peekable(chars, 0)
 }
 
-fn lex_peekable(mut chars: Peekable<CharIndices>, mut line: usize) -> Result<Vec<Spanned<Token>>, LexError> {
+fn lex_peekable(
+    mut chars: Peekable<CharIndices>,
+    mut line: usize,
+) -> Result<Vec<Spanned<Token>>, LexError> {
     let mut tokens = Vec::new();
     let mut line_start = 0;
 
@@ -74,7 +77,7 @@ fn lex_peekable(mut chars: Peekable<CharIndices>, mut line: usize) -> Result<Vec
 
         match ch {
             c if c.is_ascii_digit() => {
-                let (end, token) = parse_number(&mut chars, line, column)?;
+                let (end, token) = lex_number(&mut chars, line, column)?;
                 tokens.push(Spanned {
                     value: token,
                     line,
@@ -84,7 +87,7 @@ fn lex_peekable(mut chars: Peekable<CharIndices>, mut line: usize) -> Result<Vec
             }
 
             '"' => {
-                let (end, string) = parse_string(&mut chars, line, column)?;
+                let (end, string) = lex_string(&mut chars, line, column)?;
                 tokens.push(Spanned {
                     value: Token::StringLiteral(string),
                     line,
@@ -95,7 +98,7 @@ fn lex_peekable(mut chars: Peekable<CharIndices>, mut line: usize) -> Result<Vec
 
             '(' => {
                 chars.next();
-                let (end, contents) = parse_group(&mut chars, '(', ')', line, column)?;
+                let (end, contents) = lex_group(&mut chars, '(', ')', line, column)?;
                 tokens.push(Spanned {
                     value: Token::Parentheses(contents),
                     line,
@@ -106,7 +109,7 @@ fn lex_peekable(mut chars: Peekable<CharIndices>, mut line: usize) -> Result<Vec
 
             '[' => {
                 chars.next();
-                let (end, contents) = parse_group(&mut chars, '[', ']', line, column)?;
+                let (end, contents) = lex_group(&mut chars, '[', ']', line, column)?;
                 tokens.push(Spanned {
                     value: Token::Brackets(contents),
                     line,
@@ -117,7 +120,7 @@ fn lex_peekable(mut chars: Peekable<CharIndices>, mut line: usize) -> Result<Vec
 
             '{' => {
                 chars.next();
-                let (end, contents) = parse_group(&mut chars, '{', '}', line, column)?;
+                let (end, contents) = lex_group(&mut chars, '{', '}', line, column)?;
                 tokens.push(Spanned {
                     value: Token::Braces(contents),
                     line,
@@ -127,7 +130,7 @@ fn lex_peekable(mut chars: Peekable<CharIndices>, mut line: usize) -> Result<Vec
             }
 
             c if is_ident_start(c) => {
-                let (end, ident) = parse_identifier(&mut chars, line, column);
+                let (end, ident) = lex_identifier(&mut chars, line, column);
                 let token = match ident.as_str() {
                     "true" => Token::Boolean(true),
                     "false" => Token::Boolean(false),
@@ -142,7 +145,7 @@ fn lex_peekable(mut chars: Peekable<CharIndices>, mut line: usize) -> Result<Vec
             }
 
             _ => {
-                let (end, symbol) = parse_symbol(&mut chars, line, column);
+                let (end, symbol) = lex_symbol(&mut chars, line, column);
                 tokens.push(Spanned {
                     value: Token::Symbol(symbol),
                     line,

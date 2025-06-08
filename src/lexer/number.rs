@@ -2,7 +2,7 @@ use crate::lexer::{LexError, Token};
 use std::iter::Peekable;
 use std::str::CharIndices;
 
-pub fn parse_number(
+pub fn lex_number(
     chars: &mut Peekable<CharIndices<'_>>,
     line: usize,
     column: usize,
