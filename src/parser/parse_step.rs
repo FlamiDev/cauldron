@@ -10,11 +10,13 @@ pub const TRACE_BRACES: &str = "braces";
 pub const TRACE_TYPE: &str = "type_name";
 pub const TRACE_VALUE: &str = "value_name";
 
+#[derive(Debug, Clone, PartialEq)]
 pub struct ParseError {
     pub on: Option<Spanned<Token>>,
     pub(crate) trace: Vec<&'static str>,
 }
 
+#[derive(Debug, Clone, PartialEq)]
 pub enum ParseStep<T> {
     NotDone,
     Done(Spanned<T>),
